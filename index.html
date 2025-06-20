@@ -2,487 +2,330 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Parking Lot Management</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
-            background: #f4f6f8;
-            margin: 0;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Parking Lot Management</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    :root {
+      --bg-light: #f4f6f8;
+      --bg-dark: #1e1e2f;
+      --card-light: #ffffff;
+      --card-dark: #2c2c3c;
+      --text-light: #1a1a1a;
+      --text-dark: #eaeaea;
+      --accent: #007bff;
+      --danger: #dc3545;
+      --success: #28a745;
+    }
 
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
+    body {
+      font-family: 'Inter', sans-serif;
+      padding: 20px;
+      background: var(--bg-light);
+      color: var(--text-light);
+      margin: 0;
+      transition: all 0.3s ease;
+    }
 
-        .section {
-            background: white;
-            border-radius: 8px;
-            padding: 16px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
+    body.dark-mode {
+      background: var(--bg-dark);
+      color: var(--text-dark);
+    }
 
-        input,
-        select,
-        button {
-            padding: 8px;
-            margin: 5px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-weight: 800;
+    }
 
-        button {
-            background-color: #007bff;
-            color: white;
-            cursor: pointer;
-        }
+    .toggle-mode {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      cursor: pointer;
+      font-size: 1.5rem;
+    }
 
-        button:hover {
-            background-color: #0056b3;
-        }
+    .section {
+      background: var(--card-light);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
 
-        .floor {
-            margin-top: 20px;
-        }
+    body.dark-mode .section {
+      background: var(--card-dark);
+    }
 
-        .row {
-            display: flex;
-            gap: 4px;
-            margin-bottom: 4px;
-            flex-wrap: wrap;
-        }
+    input,
+    select,
+    button {
+      padding: 10px;
+      margin: 6px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
 
-        .spot {
-            width: 40px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-            border: 1px solid #999;
-            border-radius: 2px;
-            cursor: grab;
-            user-select: none;
-            transition: all 0.3s ease;
-            background-color: #d4edda;
-            color: black;
-        }
+    button {
+      background-color: var(--accent);
+      color: white;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
 
-        .occupied {
-            background-color: #f8d7da;
-            color: white;
-            cursor: grab;
-        }
+    button:hover {
+      background-color: #0056b3;
+    }
 
-        .result {
-            margin-top: 10px;
-            font-weight: bold;
-        }
+    .floor {
+      margin-top: 30px;
+    }
 
-        /* Modal Styles */
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
+    .row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
 
-        .modal-content {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            width: 300px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            animation: fadeIn 0.3s ease forwards;
-        }
+    .spot {
+      width: 44px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      border: 1px solid #999;
+      border-radius: 6px;
+      cursor: grab;
+      user-select: none;
+      transition: transform 0.3s, background-color 0.3s;
+      background-color: var(--success);
+      color: black;
+    }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
+    .occupied {
+      background-color: var(--danger);
+      color: white;
+    }
 
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+    .result {
+      margin-top: 10px;
+      font-weight: bold;
+    }
 
-        .close-btn {
-            float: right;
-            cursor: pointer;
-            font-weight: bold;
-            color: #007bff;
-        }
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
 
-        /* Toast Notification */
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: #333;
-            color: #fff;
-            padding: 10px 16px;
-            border-radius: 4px;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-            z-index: 1001;
-            max-width: 300px;
-            word-wrap: break-word;
-        }
+    .modal-content {
+      background: var(--card-light);
+      color: inherit;
+      padding: 24px;
+      border-radius: 12px;
+      width: 320px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+      animation: fadeIn 0.3s ease forwards;
+      position: relative;
+    }
 
-        .toast.show {
-            opacity: 1;
-            visibility: visible;
-        }
+    body.dark-mode .modal-content {
+      background: var(--card-dark);
+    }
 
-        /* Responsive Design */
-        @media (max-width: 600px) {
-            .spot {
-                width: 30px;
-                height: 20px;
-                font-size: 9px;
-            }
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
 
-            .modal-content {
-                width: 90%;
-            }
-        }
-    </style>
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 14px;
+      cursor: pointer;
+      font-size: 1.2rem;
+      color: var(--accent);
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #333;
+      color: #fff;
+      padding: 12px 18px;
+      border-radius: 6px;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+      z-index: 1001;
+      max-width: 300px;
+      font-size: 0.95rem;
+    }
+
+    .toast.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    @media (max-width: 600px) {
+      .spot {
+        width: 36px;
+        height: 24px;
+        font-size: 9px;
+      }
+      .modal-content {
+        width: 90%;
+      }
+    }
+
+    /* Auth Pages (to be handled via JS routing later) */
+    .auth-page {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .auth-card {
+      background: var(--card-light);
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    body.dark-mode .auth-card {
+      background: var(--card-dark);
+    }
+
+    .auth-card input,
+    .auth-card button {
+      display: block;
+      width: 100%;
+      margin-top: 12px;
+    }
+  </style>
 </head>
 
 <body>
+  <i class="bi bi-moon toggle-mode" onclick="toggleMode()"></i>
 
+  <div id="authContainer" class="auth-page">
+    <div class="auth-card">
+      <h2>Login</h2>
+      <input type="text" id="loginUser" placeholder="Username">
+      <input type="password" id="loginPass" placeholder="Password">
+      <button onclick="login()">Login</button>
+      <p style="margin-top: 12px; text-align:center">or</p>
+      <button onclick="showSignup()">Create Account</button>
+    </div>
+  </div>
+
+  <div id="signupContainer" class="auth-page">
+    <div class="auth-card">
+      <h2>Signup</h2>
+      <input type="text" id="signupUser" placeholder="Username">
+      <input type="password" id="signupPass" placeholder="Password">
+      <button onclick="signup()">Signup</button>
+      <p style="margin-top: 12px; text-align:center">or</p>
+      <button onclick="showLogin()">Back to Login</button>
+    </div>
+  </div>
+
+  <div id="mainApp" style="display:none">
     <h1>Parking Lot Management</h1>
-
-    <!-- Search Vehicle -->
     <div class="section">
-        <h2>Search Vehicle</h2>
-        <input type="text" id="searchInput" placeholder="Enter vehicle number" />
-        <button onclick="handleSearch()">Search</button>
-        <div class="result" id="searchResult"></div>
+      <h2>Search Vehicle</h2>
+      <input type="text" id="searchInput" placeholder="Enter vehicle number" />
+      <button onclick="handleSearch()">Search</button>
+      <div class="result" id="searchResult"></div>
     </div>
-
-    <!-- Count Free Spots -->
     <div class="section">
-        <h2>Count Free Spots</h2>
-        <select id="countTypeSelect"></select>
-        <button onclick="handleCount()">Count</button>
-        <div class="result" id="countResult"></div>
+      <h2>Count Free Spots</h2>
+      <select id="countTypeSelect"></select>
+      <button onclick="handleCount()">Count</button>
+      <div class="result" id="countResult"></div>
     </div>
-
-    <!-- Parking Floors UI -->
     <div id="parkingFloors"></div>
+  </div>
 
-    <!-- Modal Dialog -->
-    <div class="modal" id="parkModal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="hideModal()">&times;</span>
-            <h3>Park Vehicle</h3>
-            <label>Vehicle Number:</label>
-            <input type="text" id="modalVehicleNumber" />
-            <br />
-            <button onclick="submitPark()">Submit</button>
-        </div>
+  <div class="modal" id="parkModal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="hideModal()">&times;</span>
+      <h3>Park Vehicle</h3>
+      <label>Vehicle Number:</label>
+      <input type="text" id="modalVehicleNumber" />
+      <br />
+      <button onclick="submitPark()">Submit</button>
     </div>
+  </div>
 
-    <!-- Toast Notification -->
-    <div class="toast" id="toast"></div>
+  <div class="toast" id="toast"></div>
 
-    <script>
-        // === CLASS DEFINITIONS ===
-        class ParkingSpot {
-            constructor(type) {
-                this.type = type;
-                this.occupied = false;
-                this.vehicleNumber = "";
-            }
+  <script>
+    const toggleMode = () => {
+      document.body.classList.toggle("dark-mode");
+    };
 
-            park(vehicleNumber) {
-                if (this.occupied) return false;
-                this.occupied = true;
-                this.vehicleNumber = vehicleNumber;
-                return true;
-            }
+    // Dummy auth system
+    const users = JSON.parse(localStorage.getItem("users") || '{}');
 
-            unpark() {
-                this.occupied = false;
-                this.vehicleNumber = "";
-            }
-        }
+    function login() {
+      const u = document.getElementById("loginUser").value.trim();
+      const p = document.getElementById("loginPass").value.trim();
+      if (users[u] && users[u] === p) {
+        document.getElementById("authContainer").style.display = 'none';
+        document.getElementById("mainApp").style.display = 'block';
+      } else {
+        alert("Invalid credentials.");
+      }
+    }
 
-        class ParkingFloor {
-            constructor(rows, cols) {
-                this.rows = rows;
-                this.cols = cols;
-                this.spots = [];
+    function signup() {
+      const u = document.getElementById("signupUser").value.trim();
+      const p = document.getElementById("signupPass").value.trim();
+      if (!u || !p) return alert("Fill all fields");
+      if (users[u]) return alert("User already exists");
+      users[u] = p;
+      localStorage.setItem("users", JSON.stringify(users));
+      alert("Account created. Please log in.");
+      showLogin();
+    }
 
-                const types = ["CAR", "BIKE", "TRUCK"];
-                for (let i = 0; i < rows; i++) {
-                    const row = [];
-                    for (let j = 0; j < cols; j++) {
-                        const spotType = types[j % types.length];
-                        row.push(new ParkingSpot(spotType));
-                    }
-                    this.spots.push(row);
-                }
-            }
+    function showSignup() {
+      document.getElementById("authContainer").style.display = 'none';
+      document.getElementById("signupContainer").style.display = 'flex';
+    }
 
-            getFreeSpotsByType(type) {
-                let count = 0;
-                for (const row of this.spots) {
-                    for (const spot of row) {
-                        if (spot.type === type && !spot.occupied) {
-                            count++;
-                        }
-                    }
-                }
-                return count;
-            }
+    function showLogin() {
+      document.getElementById("signupContainer").style.display = 'none';
+      document.getElementById("authContainer").style.display = 'flex';
+    }
 
-            findVehicle(vehicleNumber) {
-                for (let i = 0; i < this.rows; i++) {
-                    for (let j = 0; j < this.cols; j++) {
-                        if (this.spots[i][j].occupied && this.spots[i][j].vehicleNumber === vehicleNumber) {
-                            return { row: i, col: j };
-                        }
-                    }
-                }
-                return null;
-            }
-
-            parkVehicle(row, col, vehicleNumber) {
-                if (row >= 0 && row < this.rows && col >= 0 && col < this.cols) {
-                    return this.spots[row][col].park(vehicleNumber);
-                }
-                return false;
-            }
-
-            unparkVehicle(row, col) {
-                if (row >= 0 && row < this.rows && col >= 0 && col < this.cols) {
-                    this.spots[row][col].unpark();
-                    return true;
-                }
-                return false;
-            }
-        }
-
-        class ParkingLot {
-            constructor(numFloors, rowsPerFloor, colsPerFloor) {
-                this.floors = [];
-                for (let i = 0; i < numFloors; i++) {
-                    this.floors.push(new ParkingFloor(rowsPerFloor, colsPerFloor));
-                }
-            }
-
-            parkVehicle(floorNum, row, col, vehicleNumber) {
-                if (floorNum >= 0 && floorNum < this.floors.length) {
-                    const success = this.floors[floorNum].parkVehicle(row, col, vehicleNumber);
-                    if (success) {
-                        updateUI();
-                        showToast(`Parked ${vehicleNumber} at Floor ${floorNum}, Row ${row}, Col ${col}`);
-                    } else {
-                        alert("Failed to park vehicle.");
-                    }
-                } else {
-                    alert("Invalid floor number.");
-                }
-            }
-
-            unparkVehicle(floorNum, row, col) {
-                if (floorNum >= 0 && floorNum < this.floors.length) {
-                    const success = this.floors[floorNum].unparkVehicle(row, col);
-                    if (success) {
-                        updateUI();
-                        showToast(`Unparked from Floor ${floorNum}, Row ${row}, Col ${col}`);
-                    } else {
-                        alert("Failed to unpark vehicle.");
-                    }
-                } else {
-                    alert("Invalid floor number.");
-                }
-            }
-
-            searchVehicle(vehicleNumber) {
-                for (let i = 0; i < this.floors.length; i++) {
-                    const position = this.floors[i].findVehicle(vehicleNumber);
-                    if (position) {
-                        return { floor: i, ...position };
-                    }
-                }
-                return null;
-            }
-
-            countFreeSpots(floorNum, spotType) {
-                if (floorNum >= 0 && floorNum < this.floors.length) {
-                    return this.floors[floorNum].getFreeSpotsByType(spotType);
-                }
-                return 0;
-            }
-        }
-
-        // === INITIALIZATION ===
-        const parkingLot = new ParkingLot(2, 4, 5); // 2 floors, 4x5 grid
-        let selectedSpot = null;
-        let draggedVehicle = null;
-
-        function showModal(floor, row, col) {
-            selectedSpot = { floor, row, col };
-            document.getElementById("modalVehicleNumber").value = "";
-            document.getElementById("parkModal").style.display = "flex";
-        }
-
-        function hideModal() {
-            document.getElementById("parkModal").style.display = "none";
-        }
-
-        function submitPark() {
-            const vehicleNumber = document.getElementById("modalVehicleNumber").value.trim();
-            if (!vehicleNumber) {
-                alert("Please enter a vehicle number.");
-                return;
-            }
-            if (selectedSpot) {
-                parkingLot.parkVehicle(selectedSpot.floor, selectedSpot.row, selectedSpot.col, vehicleNumber);
-                hideModal();
-            }
-        }
-
-        function handleUnpark(floor, row, col) {
-            parkingLot.unparkVehicle(floor, row, col);
-        }
-
-        function handleSearch() {
-            const vehicleNumber = document.getElementById("searchInput").value.trim();
-            const result = parkingLot.searchVehicle(vehicleNumber);
-            const output = document.getElementById("searchResult");
-
-            if (result) {
-                output.textContent = `Found at Floor ${result.floor}, Row ${result.row}, Spot ${result.col}`;
-            } else {
-                output.textContent = `Not found`;
-            }
-        }
-
-        function handleCount() {
-            const [type, floor] = document.getElementById("countTypeSelect").value.split(":");
-            const count = parkingLot.countFreeSpots(parseInt(floor), type);
-            document.getElementById("countResult").textContent = `${type} spots free: ${count}`;
-        }
-
-        function updateUI() {
-            const container = document.getElementById("parkingFloors");
-            container.innerHTML = "";
-
-            parkingLot.floors.forEach((floor, floorIndex) => {
-                const floorDiv = document.createElement("div");
-                floorDiv.className = "floor";
-                floorDiv.innerHTML = `<h3>Floor ${floorIndex}</h3>`;
-
-                const grid = document.createElement("div");
-
-                for (let i = 0; i < floor.rows; i++) {
-                    const rowDiv = document.createElement("div");
-                    rowDiv.className = "row";
-
-                    for (let j = 0; j < floor.cols; j++) {
-                        const spot = floor.spots[i][j];
-                        const spotDiv = document.createElement("div");
-                        spotDiv.className = "spot " + (spot.occupied ? "occupied" : "free");
-                        spotDiv.textContent = spot.occupied ? spot.vehicleNumber : spot.type[0];
-
-                        // Make it draggable if occupied
-                        if (spot.occupied) {
-                            spotDiv.draggable = true;
-                            spotDiv.dataset.vehicle = spot.vehicleNumber;
-                            spotDiv.dataset.floor = floorIndex;
-                            spotDiv.dataset.row = i;
-                            spotDiv.dataset.col = j;
-
-                            spotDiv.addEventListener("dragstart", dragStart);
-                        }
-
-                        spotDiv.addEventListener("click", () => {
-                            if (spot.occupied) {
-                                if (confirm("Unpark this vehicle?")) {
-                                    handleUnpark(floorIndex, i, j);
-                                }
-                            } else {
-                                showModal(floorIndex, i, j);
-                            }
-                        });
-
-                        // Drop target
-                        spotDiv.addEventListener("dragover", (e) => e.preventDefault());
-                        spotDiv.addEventListener("drop", (e) => {
-                            e.preventDefault();
-                            if (spot.occupied) return;
-                            const data = draggedVehicle;
-                            if (data) {
-                                handleUnpark(data.floor, data.row, data.col);
-                                parkingLot.parkVehicle(floorIndex, i, j, data.vehicle);
-                            }
-                        });
-
-                        rowDiv.appendChild(spotDiv);
-                    }
-
-                    grid.appendChild(rowDiv);
-                }
-
-                floorDiv.appendChild(grid);
-                container.appendChild(floorDiv);
-            });
-        }
-
-        function dragStart(e) {
-            draggedVehicle = {
-                vehicle: e.target.dataset.vehicle,
-                floor: parseInt(e.target.dataset.floor),
-                row: parseInt(e.target.dataset.row),
-                col: parseInt(e.target.dataset.col),
-            };
-            e.dataTransfer.setData("text/plain", "");
-        }
-
-        function showToast(message) {
-            const toast = document.getElementById("toast");
-            toast.textContent = message;
-            toast.classList.add("show");
-            setTimeout(() => {
-                toast.classList.remove("show");
-            }, 3000);
-        }
-
-        function populateSelectors() {
-            const countTypeSelect = document.getElementById("countTypeSelect");
-
-            const types = ["CAR", "BIKE", "TRUCK"];
-            types.forEach(type => {
-                parkingLot.floors.forEach((_, i) => {
-                    const opt = document.createElement("option");
-                    opt.value = `${type}:${i}`;
-                    opt.text = `${type} Floor ${i}`;
-                    countTypeSelect.appendChild(opt);
-                });
-            });
-        }
-
-        // Initialize UI
-        populateSelectors();
-        updateUI();
-    </script>
+    showLogin();
+  </script>
 </body>
 
 </html>
